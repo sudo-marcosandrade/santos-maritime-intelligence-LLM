@@ -1,0 +1,8 @@
+ultralytics
+yt-dlp
+opencv-python
+pandas
+google-generativeai
+python-dotenv
+ipykernel
+pillow

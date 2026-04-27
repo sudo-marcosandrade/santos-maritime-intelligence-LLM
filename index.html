@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santos Maritime Intelligence | Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0e14;
+            --card-bg: rgba(20, 26, 35, 0.7);
+            --accent: #00f2ff;
+            --text-main: #e1e4e8;
+            --text-dim: #8b949e;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow: hidden; /* O dashboard ocupa a tela inteira */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Background Effect --- */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1a2332 0%, #0a0e14 100%);
+            z-index: -1;
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-area h1 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #23d160;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #23d160;
+            animation: pulse 2s infinite;
+        }
+
+        /* --- Main Layout --- */
+        main {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            flex: 1;
+            height: calc(100vh - 80px);
+        }
+
+        /* --- Stream Section --- */
+        .stream-container {
+            position: relative;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stream-header {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .video-placeholder {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            position: relative;
+        }
+
+        .video-placeholder img {
+            max-width: 100%;
+            max-height: 100%;
+            opacity: 0.8;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(0, 242, 255, 0.3);
+            box-shadow: 0 0 15px var(--accent);
+            animation: scan 4s linear infinite;
+            z-index: 2;
+        }
+
+        /* --- Gallery Section --- */
+        .gallery-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .gallery-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        .gallery-container::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .detection-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .detection-card:hover {
+            transform: scale(1.02);
+            border-color: var(--accent);
+        }
+
+        .detection-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detection-info {
+            padding: 0.8rem;
+        }
+
+        .detection-time {
+            font-size: 0.7rem;
+            color: var(--accent);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .detection-desc {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: var(--text-main);
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* --- Animations --- */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* --- Overlay Elements --- */
+        .telemetry-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .telemetry-item {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-shadow: 0 0 5px #000;
+            margin-bottom: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <h1>Santos Maritime Intelligence</h1>
+        </div>
+        <div class="system-status">
+            <div class="status-dot"></div>
+            LIVE FEED: CANAL DE ACESSO - PORTO DE SANTOS
+        </div>
+    </header>
+
+    <main>
+        <!-- Stream Principal -->
+        <section class="stream-container">
+            <div class="stream-header">
+                <span style="font-size: 0.7rem; font-weight: 600;">[ CAM-01 ] - AI DETECTOR ACTIVE</span>
+                <span id="clock" style="font-family: monospace;">00:00:00</span>
+            </div>
+            <div class="video-placeholder">
+                <div class="scan-line"></div>
+                <div class="telemetry-overlay">
+                    <div class="telemetry-item">LAT: -23.9618</div>
+                    <div class="telemetry-item">LNG: -46.3322</div>
+                    <div class="telemetry-item">MODEL: YOLO12-MARITIME</div>
+                    <div class="telemetry-item" id="fps-counter">ENC: H.264 / 30 FPS</div>
+                </div>
+                <!-- Stream de Vídeo Real vindo da API -->
+                <img src="/api/video_feed" alt="Harbor Stream" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+        </section>
+
+        <!-- Galeria de Detecções -->
+        <section class="gallery-container" id="detections-feed">
+            <!-- Cards serão inseridos via JS -->
+            <div style="padding: 20px; text-align: center; color: var(--text-dim);">
+                Buscando detecções recentes...
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Atualiza o Relógio
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+
+        // Busca Detecções da API
+        async function fetchDetections() {
+            try {
+                const response = await fetch('/api/detections/latest?limit=8');
+                const data = await response.json();
+                renderDetections(data);
+            } catch (error) {
+                console.error('Erro ao buscar detecções:', error);
+            }
+        }
+
+        function renderDetections(detections) {
+            const feed = document.getElementById('detections-feed');
+            
+            if (detections.length === 0) {
+                feed.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim);">Nenhum navio detectado recentemente.</div>';
+                return;
+            }
+
+            feed.innerHTML = '';
+            detections.forEach(det => {
+                const card = document.createElement('div');
+                card.className = 'detection-card';
+                
+                // Trata o caminho da imagem para ser acessível via URL
+                // Exemplo: assets/detections/crop_1.jpg -> /assets/detections/crop_1.jpg
+                const imgUrl = det.image_path.replace(/\\/g, '/');
+                
+                card.innerHTML = `
+                    <img src="${imgUrl}" class="detection-img" onerror="this.src='https://via.placeholder.com/300x180?text=Sem+Imagem'">
+                    <div class="detection-info">
+                        <span class="detection-time">${new Date(det.timestamp).toLocaleString()}</span>
+                        <p class="detection-desc">${det.vlm_description || 'Analisando características...'}</p>
+                    </div>
+                `;
+                feed.appendChild(card);
+            });
+        }
+
+        // Pooling inicial e periódico
+        fetchDetections();
+        setInterval(fetchDetections, 5000); // Atualiza a cada 5 segundos
+    </script>
+</body>
+</html>

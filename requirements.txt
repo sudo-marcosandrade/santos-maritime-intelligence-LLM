@@ -2,7 +2,7 @@ ultralytics
 yt-dlp
 opencv-python
 pandas
-google-generativeai
+google-genai
 python-dotenv
 ipykernel
 pillow
